@@ -1,12 +1,5 @@
 ---
 # Playbook: Create Kafka topics (filas)
-# Requirements:
-# - `community.kafka` collection installed on the control node:
-#     ansible-galaxy collection install community.kafka
-# - Python deps: `kafka-python` installed on control node (used by the collection)
-# Usage examples:
-#   ansible-playbook -i ansible/inventory.ini ansible/kafka_create_topics.yml
-#   ansible-playbook -i ansible/inventory.ini ansible/kafka_create_topics.yml -e "kafka_topics=[{name:'mytopic',partitions:3,replication_factor:2}]"
 
 - name: Ensure Kafka topics exist
   hosts: kafka
@@ -24,8 +17,8 @@
       community.kafka.kafka_topic:
         name: "{{ item.name }}"
         state: present
-        partitions: "{{ item.partitions | default(3) }}"
-        replication_factor: "{{ item.replication_factor | default(1) }}"
+        partitions: "{{ item.partitions | default() }}"
+        replication_factor: "{{ item.replication_factor | default() }}"
         config: "{{ item.config | default({}) }}"
         bootstrap_servers: "{{ kafka_bootstrap_servers }}"
       loop: "{{ kafka_topics }}"

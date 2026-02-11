@@ -1,46 +1,7 @@
 ## High-level Architecture: On-Premises App using Nginx, Redis, Kafka, PostgreSQL
 
-```mermaid
-graph LR
-  subgraph Edge
-    U[Users]
-    LB[Load Balancer (HA)]
-    U -->|HTTPS (TLS)| LB
-  end
-
-  subgraph Gateway
-    NG[Nginx API Gateway (HA, reverse-proxy)]
-    LB --> NG
-  end
-
-  subgraph App
-    AS[Application Servers (stateless, auto-scale)]
-    NG --> AS
-  end
-
-  subgraph Data
-    Redis[Redis Cluster (sentinel / cluster) — Read Cache]
-    Kafka[Kafka Cluster (multi-broker, replication) — Messaging]
-    PG[PostgreSQL Cluster (Primary + Replicas, Patroni)]
-    AS -->|cache read/write| Redis
-    AS -->|produce/consume| Kafka
-    AS -->|read/write| PG
-  end
-
-  subgraph Ops
-    Backup[Backup Service & Storage]
-    Monitoring[Prometheus + Grafana]
-    Auth[LDAP / AD]
-    AS --> Monitoring
-    PG --> Backup
-  end
-
-  classDef infra fill:#f9f,stroke:#333,stroke-width:1px
-  class LB,NG,AS,Redis,Kafka,PG infra
-```
-
 ### Main components
-
+- Load balancer: Resolve HTTPS and isolate the application.
 - Nginx (API Gateway): Routes requests to app servers, terminates TLS, enforces WAF rules and rate limits. Deployed HA behind a hardware or software load balancer.
 - Redis (Read Cache): Clustered Redis with Sentinel or Redis Cluster for high availability and partitioning. Used for session caches, hot lookups, and short TTL objects.
 - Kafka (Messaging): Multi-broker Kafka cluster with replication and appropriate retention policies; used for event streaming and decoupling producers/consumers.
@@ -66,4 +27,4 @@ graph LR
 ### Notes on operations
 
 - Monitor latency, replication lag, and resource saturation; add alerting for failover events.
-- Maintain maintenance windows for cluster upgrades; use rolling upgrades for zero-downtime where possible.
+- Maintain maintenance for cluster upgrades; use rolling upgrades for zero-downtime where possible.
