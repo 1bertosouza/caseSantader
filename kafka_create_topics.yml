@@ -1,14 +1,13 @@
----
 - name: Create Kafka Topics
   hosts: kafka_brokers
   vars:
     kafka_home: /opt/kafka
-    zookeeper_host: "localhost:2181"
+    zookeeper_host: "http://brokerURL:2181"
     kafka_topics:
-      - name: topico_1
+      - name: topic_1
         partitions: 3
         replication: 1
-      - name: topico_2
+      - name: topic_2
         partitions: 1
         replication: 1
   tasks:
