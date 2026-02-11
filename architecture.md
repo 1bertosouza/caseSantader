@@ -16,6 +16,8 @@
 - Kafka: Deploy odd-numbered brokers across hosts, use rack awareness, maintain min ISR, and enable TLS encryption between brokers and clients.
 - PostgreSQL: Primary + multiple replicas across different physical hosts; use Patroni or repmgr for automatic failover; synchronous replication where needed for strong consistency and asynchronous for read scaling.
 
+
+
 ### Security strategies
 
 - Network segmentation: Separate VLANs or subnets for frontend, app, and data layers; firewall rules permit only required traffic.
