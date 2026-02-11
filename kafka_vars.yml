@@ -14,3 +14,5 @@ kafka_topics:
   - name: queue_payments
     partitions: 3
     replication_factor: 3
+    config:
+      retention.ms: 604800000
