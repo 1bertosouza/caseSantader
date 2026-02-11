@@ -1,8 +1,0 @@
----
-# Ansible variables for PostgreSQL Day-2 playbook
-db_name: myappdb
-db_admin: postgres
-backup_dir: /var/backups/postgresql
-pg_superuser: postgres
-pg_port: 5432
-backup_retention_days: 7
