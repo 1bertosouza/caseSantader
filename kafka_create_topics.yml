@@ -1,0 +1,38 @@
+---
+# Playbook: Create Kafka topics (filas)
+
+- name: Ensure Kafka topics exist
+  hosts: kafka
+  gather_facts: false
+  vars_files:
+    - kafka_vars.yml
+
+  tasks:
+    - name: Ensure community.kafka collection is available (informational)
+      debug:
+        msg: "Install collection with: ansible-galaxy collection install community.kafka"
+      run_once: true
+
+    - name: Create topics via community.kafka.kafka_topic (idempotent)
+      community.kafka.kafka_topic:
+        name: "{{ item.name }}"
+        state: present
+        partitions: "{{ item.partitions | default() }}"
+        replication_factor: "{{ item.replication_factor | default() }}"
+        config: "{{ item.config | default({}) }}"
+        bootstrap_servers: "{{ kafka_bootstrap_servers }}"
+      loop: "{{ kafka_topics }}"
+      loop_control:
+        label: "{{ item.name }}"
+      tags: [create]
+
+    - name: Verify topics exist (list)
+      community.kafka.kafka_topic_info:
+        bootstrap_servers: "{{ kafka_bootstrap_servers }}"
+      register: kafka_topics_info
+      tags: [verify]
+
+    - name: Show created topics
+      debug:
+        var: kafka_topics_info.topics
+      tags: [verify]
