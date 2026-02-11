@@ -1,0 +1,45 @@
+---
+# Playbook: Create Kafka topics (filas)
+# Requirements:
+# - `community.kafka` collection installed on the control node:
+#     ansible-galaxy collection install community.kafka
+# - Python deps: `kafka-python` installed on control node (used by the collection)
+# Usage examples:
+#   ansible-playbook -i ansible/inventory.ini ansible/kafka_create_topics.yml
+#   ansible-playbook -i ansible/inventory.ini ansible/kafka_create_topics.yml -e "kafka_topics=[{name:'mytopic',partitions:3,replication_factor:2}]"
+
+- name: Ensure Kafka topics exist
+  hosts: kafka
+  gather_facts: false
+  vars_files:
+    - kafka_vars.yml
+
+  tasks:
+    - name: Ensure community.kafka collection is available (informational)
+      debug:
+        msg: "Install collection with: ansible-galaxy collection install community.kafka"
+      run_once: true
+
+    - name: Create topics via community.kafka.kafka_topic (idempotent)
+      community.kafka.kafka_topic:
+        name: "{{ item.name }}"
+        state: present
+        partitions: "{{ item.partitions | default(3) }}"
+        replication_factor: "{{ item.replication_factor | default(1) }}"
+        config: "{{ item.config | default({}) }}"
+        bootstrap_servers: "{{ kafka_bootstrap_servers }}"
+      loop: "{{ kafka_topics }}"
+      loop_control:
+        label: "{{ item.name }}"
+      tags: [create]
+
+    - name: Verify topics exist (list)
+      community.kafka.kafka_topic_info:
+        bootstrap_servers: "{{ kafka_bootstrap_servers }}"
+      register: kafka_topics_info
+      tags: [verify]
+
+    - name: Show created topics
+      debug:
+        var: kafka_topics_info.topics
+      tags: [verify]

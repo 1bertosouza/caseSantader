@@ -1,0 +1,7 @@
+/.vscode
+.cache
+__pycache__/
+*.pyc
+*.retry
+*.swp
+ansible/hosts
