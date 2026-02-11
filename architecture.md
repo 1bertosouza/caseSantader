@@ -6,6 +6,7 @@
 - Redis (Read Cache): Clustered Redis with Sentinel or Redis Cluster for high availability and partitioning. Used for session caches, hot lookups, and short TTL objects.
 - Kafka (Messaging): Multi-broker Kafka cluster with replication and appropriate retention policies; used for event streaming and decoupling producers/consumers.
 - PostgreSQL (Persistence): Primary-replica architecture managed by Patroni (or similar) for failover; WAL shipping and regular backups to immutable storage.
+- HashiCorp Consul: Is a networking solution for service discovery, configuration management, and connectivity security in cloud and on-premises infrastructure environments. It enables service location, integrity checks, and encryption of communication between services, facilitating automation and high availability in microservices architectures.
 
 ### High availability strategies
 
