@@ -2,7 +2,7 @@
   hosts: kafka_brokers
   vars:
     kafka_home: /opt/kafka
-    zookeeper_host: "localhost:2181"
+    zookeeper_host: "http://brokerURL:2181"
     kafka_topics:
       - name: topic_1
         partitions: 3
