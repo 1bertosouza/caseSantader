@@ -1,14 +1,14 @@
 ---
 # Playbook: Create Kafka topics (filas)
 
-- name: Ensure Kafka topics exist
+- name: Kafka topic
   hosts: kafka
   gather_facts: false
   vars_files:
     - kafka_vars.yml
 
   tasks:
-    - name: Ensure community.kafka collection is available (informational)
+    - name: Ensure community.kafka collection is available
       debug:
         msg: "Install collection with: ansible-galaxy collection install community.kafka"
       run_once: true
