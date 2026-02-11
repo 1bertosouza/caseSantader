@@ -1,38 +1,27 @@
 ---
-# Playbook: Create Kafka topics (filas)
-
-- name: Kafka topic
-  hosts: kafka
-  gather_facts: false
-  vars_files:
-    - kafka_vars.yml
-
+- name: Create Kafka Topics
+  hosts: kafka_brokers
+  vars:
+    kafka_home: /opt/kafka
+    zookeeper_host: "localhost:2181"
+    kafka_topics:
+      - name: topico_1
+        partitions: 3
+        replication: 1
+      - name: topico_2
+        partitions: 1
+        replication: 1
   tasks:
-    - name: Ensure community.kafka collection is available
-      debug:
-        msg: "Install collection with: ansible-galaxy collection install community.kafka"
-      run_once: true
-
-    - name: Create topics via community.kafka.kafka_topic (idempotent)
-      community.kafka.kafka_topic:
-        name: "{{ item.name }}"
-        state: present
-        partitions: "{{ item.partitions | default() }}"
-        replication_factor: "{{ item.replication_factor | default() }}"
-        config: "{{ item.config | default({}) }}"
-        bootstrap_servers: "{{ kafka_bootstrap_servers }}"
+    - name: Create Kafka Topics
+      shell: >
+        {{ kafka_home }}/bin/kafka-topics.sh
+        --create
+        --if-not-exists
+        --zookeeper {{ zookeeper_host }}
+        --partitions {{ item.partitions }}
+        --replication-factor {{ item.replication }}
+        --topic {{ item.name }}
       loop: "{{ kafka_topics }}"
-      loop_control:
-        label: "{{ item.name }}"
-      tags: [create]
-
-    - name: Verify topics exist (list)
-      community.kafka.kafka_topic_info:
-        bootstrap_servers: "{{ kafka_bootstrap_servers }}"
-      register: kafka_topics_info
-      tags: [verify]
-
-    - name: Show created topics
-      debug:
-        var: kafka_topics_info.topics
-      tags: [verify]
+      run_once: true
+      register: topic_creation
+      changed_when: "'Created' in topic_creation.stdout"
