@@ -16,6 +16,7 @@
 - PostgreSQL: Primary + multiple replicas across different physical hosts; use Patroni or repmgr for automatic failover; synchronous replication where needed for strong consistency and asynchronous for read scaling.
 - HashiCorp Consul: Is a networking solution for service discovery, configuration management, and connectivity security in cloud and on-premises infrastructure environments. It enables service location, integrity checks, and encryption of communication between services, facilitating automation and high availability in microservices architectures.
 
+
 ### Security strategies
 
 - Network segmentation: Separate VLANs or subnets for frontend, app, and data layers; firewall rules permit only required traffic.
